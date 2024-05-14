@@ -1,7 +1,18 @@
 const express = require("express");
 const app = express();
+const morgan = require('morgan')
 
 app.use(express.json());
+
+// 自定义token来记录请求体内容
+morgan.token('body', (req) => JSON.stringify(req.body));
+
+// 定义日志格式，包含请求体内容
+const logFormat = ':method :url :status :res[content-length] - :response-time ms :body';
+
+// 使用morgan中间件
+app.use(morgan(logFormat));
+
 let persons = [
   {
     id: 1,
@@ -69,7 +80,7 @@ const generateId = () => {
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
-  console.log(body);
+  // console.log(body);
   if (!body.name || !body.number) {
     return response.status(400).json({
       error: "name or number missing",
@@ -77,7 +88,7 @@ app.post("/api/persons", (request, response) => {
   }
 
   const flag = persons.find(person=>person.name === body.name)
-  if(flag.length) {
+  if(flag) {
     return response.status(400).json({
       error: 'name must be unique'
     })
