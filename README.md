@@ -27,3 +27,5 @@ Learn React, Redux, Node.js, MongoDB, GraphQL and TypeScript in one go! This cou
   - [x] part3-c 3.13-3.14 Phonebook database
 - [x] May 17, 2024
   - [x] Deploying app to internet
+  - [x] Connecting the backend to a database
+  - [x] Use database to CRUD
