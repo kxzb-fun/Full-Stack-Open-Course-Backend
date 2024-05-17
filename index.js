@@ -1,7 +1,9 @@
 const express = require("express");
 const app = express();
 const morgan = require('morgan')
-
+const cors = require('cors')
+app.use(cors())
+app.use(express.static('dist'))
 app.use(express.json());
 
 // 自定义token来记录请求体内容
@@ -53,9 +55,9 @@ app.get("/api/info", (request, response) => {
   );
 });
 
-// app.get("/api/persons", (request, response) => {
-//   response.json(persons);
-// });
+app.get("/api/persons", (request, response) => {
+  response.json(persons);
+});
 
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
@@ -67,6 +69,20 @@ app.get("/api/persons/:id", (request, response) => {
     response.status(404).end();
   }
 });
+
+// update person
+app.put("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const body = request.body;
+  persons.find((person,index) => {
+    if(person.id === id) {
+      persons[index] = body
+      response.json(persons);
+    }
+  });
+  
+});
+
 app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
   persons = persons.filter((person) => person.id !== id);
@@ -104,7 +120,9 @@ app.post("/api/persons", (request, response) => {
 
   response.json(person);
 });
-const PORT = 3001;
+
+const PORT = process.env.PORT || 3001
+
 app.listen(PORT, () => {
-  console.log(`Server running on localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
