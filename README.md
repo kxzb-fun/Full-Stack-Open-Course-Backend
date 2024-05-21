@@ -4,6 +4,10 @@
 
 My application link use Render server [click me](https://full-stack-open-course-backend.onrender.com)
 
+## phoneBook Project
+
+The code for this repository corresponds to the project in [Part 3 Programming a server with NodeJS and Express](https://fullstackopen.com/en/part3)
+
 ## Course Info
 
 [Full Stack Open Course Link](https://fullstackopen.com/en/)
@@ -29,3 +33,6 @@ Learn React, Redux, Node.js, MongoDB, GraphQL and TypeScript in one go! This cou
   - [x] Deploying app to internet
   - [x] Connecting the backend to a database
   - [x] Use database to CRUD
+- [x] May 21, 2024
+  - [x] part3-d 3.19-3.21 add Mongoose custom validator functionality
+  - [x] part3-d 3.22 add eslint validate
