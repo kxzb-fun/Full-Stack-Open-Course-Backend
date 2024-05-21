@@ -4,7 +4,7 @@ const url = process.env.MONGODB_URI;
 mongoose.set("strictQuery", false);
 mongoose
   .connect(url)
-  .then((result) => {
+  .then(() => {
     console.log("connected to MongoDB");
   })
   .catch((error) => {
@@ -20,12 +20,12 @@ const personSchema = new mongoose.Schema({
     type: String,
     minLength: 8,
     validate: {
-      validator: function(v) {
+      validator: function (v) {
         return /^\d{2,3}-\d{5,}$/.test(v);
       },
-      message: props => `${props.value} is not a valid phone number!`
+      message: (props) => `${props.value} is not a valid phone number!`,
     },
-    required: [true, 'number have length of 8 or more required']
+    required: [true, "number have length of 8 or more required"],
   },
 });
 // 处理返回数据的 _id __v
@@ -39,5 +39,4 @@ personSchema.set("toJSON", {
 });
 
 // const Person = mongoose.model("Person", personSchema);
-module.exports = mongoose.model('Person', personSchema)
-
+module.exports = mongoose.model("Person", personSchema);

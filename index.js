@@ -30,8 +30,8 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message);
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
-  } else if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
@@ -74,9 +74,13 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 // update person
 app.put("/api/persons/:id", (request, response, next) => {
-  const { name, number } = request.body
+  const { name, number } = request.body;
   // 关于findByIdAndUpdate方法添加了可选的 { new: true } 参数，这将导致我们的事件处理程序被新修改的文档而不是原始文档调用。
-  Person.findByIdAndUpdate(request.params.id, { name, number }, { new: true, runValidators: true, context: 'query' })
+  Person.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: "query" }
+  )
     .then((updatedPerson) => {
       response.json(updatedPerson);
     })
@@ -84,9 +88,9 @@ app.put("/api/persons/:id", (request, response, next) => {
 });
 
 // 删除电话
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then((result) => {
+    .then(() => {
       // the status code 204 no content and return no data with the response.
       response.status(204).end();
     })
@@ -115,9 +119,12 @@ app.post("/api/persons", (request, response, next) => {
       number: body.number,
     });
 
-    person.save().then((savedPerson) => {
-      response.json(savedPerson);
-    }).catch(error => next(error))
+    person
+      .save()
+      .then((savedPerson) => {
+        response.json(savedPerson);
+      })
+      .catch((error) => next(error));
   });
 });
 
