@@ -28,16 +28,14 @@ app.use((req, res, next) => {
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
-
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
   }
 
   next(error);
 };
-
-// this has to be the last loaded middleware, also all the routes should be registered before this!
-app.use(errorHandler);
 
 app.get("/", (request, response) => {
   response.send("<h1>Hello World!</h1>");
@@ -76,13 +74,9 @@ app.get("/api/persons/:id", (request, response, next) => {
 
 // update person
 app.put("/api/persons/:id", (request, response, next) => {
-  const body = request.body;
-  const person = {
-    name: body.name,
-    number: body.number,
-  };
+  const { name, number } = request.body
   // 关于findByIdAndUpdate方法添加了可选的 { new: true } 参数，这将导致我们的事件处理程序被新修改的文档而不是原始文档调用。
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(request.params.id, { name, number }, { new: true, runValidators: true, context: 'query' })
     .then((updatedPerson) => {
       response.json(updatedPerson);
     })
@@ -100,7 +94,7 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 // 添加电话信息
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
   // console.log(body);
   if (!body.name || !body.number) {
@@ -123,9 +117,13 @@ app.post("/api/persons", (request, response) => {
 
     person.save().then((savedPerson) => {
       response.json(savedPerson);
-    });
+    }).catch(error => next(error))
   });
 });
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+// 所有路由注册之后
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 
